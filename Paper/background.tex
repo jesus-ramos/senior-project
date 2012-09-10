@@ -1,2 +1,19 @@
 \section{Background}
 
+\subsection{DM-Cache}
+
+DM-Cache is a block-level caching mechanism implemented as a module in the Linux
+kernel \cite{DM-Cache}. It allows for specification of a local cache device
+where recently used blocks can be stored for faster access time. It supports
+both write-back and write-through functionality for handling cached data.
+
+The purpose of DM-Cache is to cache recently used blocks on local storage
+instead of retrieving them from some external storage source. This helps to
+alleviate network bandwidth issues as well as reduce response times and
+indirectly save power by issuing less requests to the storage node.
+
+The current implementation of DM-Cache uses a hash table that maps logical block
+addresses to entries within the hash table and evictions are done when two block
+addresses map to the same entry but contain different data. This eviction scheme
+does not take into account most recently used blocks and it also does not make
+any attempt to pre-fetch any other blocks.
