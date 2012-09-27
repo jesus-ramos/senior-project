@@ -1,0 +1,37 @@
+\section{Introduction}
+
+Data center power consumption is growing very rapidly. In 2011 it was estimated
+that U.S. data centers consumed about 100 billion kWh of electricity at a
+staggering cost of \$7.4 billion \cite{data-center-power}. Because data centers
+house so many computers even small savings per machine can lead to large
+savings overall.
+
+Power consumption of an SSD when compared to standard hard disks is much lower
+due to the lack of mechanical parts. This makes them ideal for saving power and
+increasing performance in data centers. Storage cost of SSD's when compared to
+traditional hard drives is also much higher so using them as primary storage can
+become very expensive and impractical. Work such as that by Lee et al.\ has
+shown that SSD's can be used sparingly to improve throughput of enterprise
+database applications \cite{enterprise-ssd}.
+
+We can leverage SSD's in data centers not only to improve throughput and
+performance of applications, but to save energy as well. Using an SSD as a local
+cache device can help mitigate the cost of having to read from a mechanical disk
+and provides another caching layer between physical memory and the hard
+disk. Energy is saved not only by issuing less requests to the mechanical disk
+but also from the increased performance granted by the SSD. A workload can
+finish in much less time if requests can be satisfied from faster storage which
+means the workload will consume less energy as energy usage scales with the
+amount of time the workload ran for.
+
+The remainder of this paper is organized as follows. In the following section we
+provide background information on the use of SSD's as local cache
+devices. Section~\ref{sec:related} discusses related work and current approaches
+used to save energy in cloud based systems as well as different approaches to
+caching. Section~\ref{sec:implementation} details the design and implementation
+of the caching policies that were implemented as well as the tools used to
+measure power consumption online. In Section~\ref{sec:evaluation} we present our
+test setup and evaluation of these caching algorithms as well as power
+consumption statistics for each. Our discussion and future work is detailed in
+Section~\ref{sec:discussion} and Section~\ref{sec:future} respectively and we
+conclude in Section~\ref{sec:conclusion}.

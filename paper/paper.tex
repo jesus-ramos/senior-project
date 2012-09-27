@@ -4,6 +4,7 @@
 \usepackage{graphicx}
 \usepackage{color}
 \usepackage{url}
+\usepackage[T1]{fontenc}
 
 \graphicspath{{../images/}}
 
@@ -24,9 +25,9 @@
   \\
   Florida International University
   \\
-  \texttt{\rm \{jramo028, ajeff003, srodr063, jcabr020, tdasi002\}@fiu.edu} 
+  {\rm \texttt{\{jramo028, ajeff003, srodr063, jcabr020, tdasi002\}@fiu.edu}}
   \\
-  \texttt{\rm ming@cs.fiu.edu}
+  {\rm \texttt{ming@cs.fiu.edu}}
 }
 \date{}
 
@@ -38,7 +39,6 @@
 
 \input{intro}
 \input{background}
-\input{motivation}
 \input{related}
 \input{implementation}
 \input{evaluation}
@@ -46,7 +46,10 @@
 \input{future}
 \input{conclusion}
 
-\bibliography{paper}
-\bibliographystyle{acm}
+{
+  \footnotesize
+  \bibliography{paper}
+  \bibliographystyle{acm}
+}
 
 \end{document}
