@@ -1,16 +1,45 @@
 \section{Related Work}
 \label{sec:related}
 
-Caching data on SSDs for the goal of saving power is not a new concept. Some of
-the ideas presented in this paper are borrowed from previous work on using SSD's
-as cache for the slower and more energy consuming hard disk drives
-\cite{flash-disk-hybrid}. Although the techniques used here differ somewhat,
-methods for accurately modeling power consumption in HDDs have been extensively
-explored. For instance Zedlewski et al.\ successfully developed a modeling
-technique for empirically extracting parameters from hard disk drives, taking
-seeks, spins, and idle power into account \cite{hard-disk-power}. Although
-simulators have been created for evaluating performance on NAND Flash-based SSDs
-\cite{flashsim}, to the best of our knowledge, there is little development on
-accurate modeling of energy consumption for solid state drives. One source
-analyzes the energy efficiency of flash-based SSDs, but no advanced modeling
-technique is used \cite{ssd-energy-efficiency}.
+Caching data on solid state drives (SSD) in order to save power is not a new
+concept. Some of the ideas presented in this paper are borrowed from previous
+work on using SSD's as cache for the slower and more energy consuming hard disk
+drives (HDD) \cite{flash-disk-hybrid}. In the work of Useche et al., the use of
+an external caching system with enabled pre-fetching, caching and buffering of
+data is explored for the purpose of reducing disk activities and saving power
+\cite{extern-cache-energy-saving}. The following sections of this related works
+discuss some of the power measuring papers that we explored, as well as the
+policies that we will use in our system.
+
+\subsection{Power Measuring}
+
+Methods for accurately modeling power consumption in HDD's have been extensively
+explored. Zedlewski et al. developed a modeling technique for empirically
+extracting parameters from hard disk drives, taking seeks, spins, and idle power
+into consideration \cite{hard-disk-power}. Although simulators have been created
+for evaluating performance on NAND Flash-based SSD's \cite{flashsim}, to the best
+of our knowledge, there is little development on accurate modeling of energy
+consumption for solid state drives. One source analyzes the energy efficiency of
+flash-based SSD's, but no advanced modeling technique is used
+\cite{ssd-energy-efficiency}. For the purpose of this paper, we use simple power
+monitoring tools to measure instantaneous power consumption.
+
+\subsection{Cache Partitioning and Replication}
+
+Previous work on replication shows how a simple key-value store can be used to
+hash keys to an unique destination node on traditional distributed systems
+\cite{chord} \cite{dynamo}. By using a ring-structured distributed hash table,
+high scalability is ensured by establishing an upper bound on the number of keys
+that each node is responsible for. In addition, the load across servers can be
+balanced by distributing the keys as evenly as possible across nodes on
+different clusters, and even across data centers\cite{dynamo}.
+
+The ring-based replication policy also makes the data highly available by
+maximizing the number of nodes that contain replicas. However, for this paper we
+will not consider availability, since data will be accessed by a single
+coordinator client. Our Device Mapper Cache implementation uses a key-value
+replication approach that is very similar to that found in \cite{chord} in order
+to cooperatively replicate the clean pages that are used least often, and
+invalidate without having read from disk again later. The objective is to
+maximize the working set across SSD caches in the storage network and give
+storage server HDD's more chances to remain spun down for a long period of time.
