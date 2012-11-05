@@ -1,3 +1,16 @@
 \section{Design and Implementation}
 \label{sec:implementation}
 
+\subsection{Modifications to DM-Cache}
+
+\subsubsection{Radix Tree}
+
+DM-Cache currently employs a hash table for managing the cached blocks. Eviction
+of cached blocks is done when there is a conflict in the hash table where two
+blocks map to the same entry. Cache sizes are also restricted to powers of two
+in size because of the hash function used in the implementation.
+
+In order to improve cache management and remove the cache size restrictions the
+hash table was replaced with a radix tree. This allowed for implementation of
+the LRU (Least Recently Used) and LFU (Least Frequently Used) cache management
+algorithms.
