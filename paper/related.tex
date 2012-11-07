@@ -43,3 +43,15 @@ to cooperatively replicate the clean pages that are used least often, and
 invalidate without having read from disk again later. The objective is to
 maximize the working set across SSD caches in the storage network and give
 storage server HDD's more chances to remain spun down for a long period of time.
+
+\subsection{Disk Spin-down}
+
+Helmbold et al. proposes the share algorithm to dynamically spin down disks
+\cite{disk-spindown}. While Helmbold et al demonstrates the power saved by using
+an adaptive spin down algorithm instead of best fixed time out for spinning
+down, Bisson et al considers the reduced performance associated with using this
+algorithm \cite{spindown-algorithms}. One source documents the reduced power
+consumption of using a hybrid system, composed of a non-volatile cache and a
+disk, combined with I/O subsystem support to decrease the occurrence spin
+ups. For the purpose of this paper we will spin up when the next I/O request is
+received.

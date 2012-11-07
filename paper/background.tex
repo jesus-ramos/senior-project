@@ -9,7 +9,7 @@ FlashCache which is based on the implementation of DM-Cache \cite{flashcache}.
 \subsection{Storage Area Networks}
 
 Due to the physical limitation of local storage, many enterprise solutions
-choose to emply Storage Area Networks, or SAN's, in an attempt to centralize
+choose to employ Storage Area Networks, or SAN's, in an attempt to centralize
 storage access and provide larger storage capabilities. SAN's also provide for
 simplification of virtual machine migration and increased data reliability. Due
 to the central nature of the storage this means that multiple nodes will use the
@@ -19,13 +19,13 @@ so quickly. Because the storage is no longer local this increases request
 latency as the storage node is further from the client and has to service
 multiple clients at a time. With this kind of storage bottlenecks such as
 network bandwidth and I/O throughput can play large roles in both performance
-and power consumtion.
+and power consumption.
 
 \subsection{Local SSD Caching}
 
 Usage of SSD's as primary storage is impractical because of cost and storage
 size. The cost of an SSD per gigabyte is much higher than that of conventional
-HDD's and their storage size is very limited compared to multi terrabyte hard
+HDD's and their storage size is very limited compared to multi terabyte hard
 disks. SSD performance is much higher than HDD's as there are no mechanical
 parts which makes them ideal to use as cache devices.
 
@@ -63,3 +63,18 @@ does not take into account most recently used blocks and it also does not make
 any attempt to pre-fetch any other blocks. Our work expands DM-Cache's cache
 eviction policy to make smarter decisions in order to increase performance and
 save energy.
+
+\subsection{Effect of Spinning Down Disks}
+
+Generally, a spun down disk consumes less power than a spinning disk. While the
+spinning down of mechanical disks during idle time can reduce power consumption,
+it can also be detrimental to the disks lifetime. Frequent disk spin down causes
+physical damage due to the head load/unload cycles that are performed. Low
+performance disks can withstand up to 500,000 spin downs in their lifetime. On
+the other hand, enterprise disks, which are higher performance disks that data
+centers usually use, are not intended to be spun down frequently. These disks
+can only tolerate around 25,000 disk spin downs, which limits the amount of
+times they may be spun down per hour. Seagate Constellation ES drives should not
+be spun down more than once every 15 minutes.  The spinning down of disks also
+impacts performance as it takes 6-10 seconds to spin up a disk after it has been
+spun down.
