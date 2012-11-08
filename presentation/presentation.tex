@@ -3,7 +3,16 @@
 \usetheme{CambridgeUS}
 \usecolortheme{beaver}
 
-\title{}
+\usepackage{adjustbox}
+\usepackage{listings}
+
+\lstset{
+  language=C,
+  keywordstyle=\color{blue}
+}
+
+\title[Cache Management]{Implementation of Cache Management Algorithms in
+  DM-Cache}
 \author{Jesus Ramos}
 \institute[FIU]{Florida International University}
 \date{}
@@ -11,5 +20,74 @@
 \begin{document}
 
 \maketitle
+
+\section{Background}
+
+\subsection{Implementation Details}
+
+\begin{frame}
+  \frametitle{DM-Cache Current Implementation}
+
+  \begin{itemize}
+    \item Uses a hash table of fixed size which is initialized during cache
+    creation
+    \item Eviction is done when a hash collision is detected, simply evict the
+    previous block from the entry in the hash table
+  \end{itemize}
+
+  Drawbacks:
+  \begin{itemize}
+    \item Size of cache has to be power of 2 due to hashing function used
+    \item Hash table occupies a lot of memory in RAM
+    \item Evictions have no notion of block use or frequency of access
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{New Implementation}
+
+  \begin{itemize}
+    \item Replaces hash table with Radix Tree indexed by disk sectors
+    \item Adds linked list to manage LRU/LFU eviction policies
+    \item Uses radix tree to index entries in the list quickly
+  \end{itemize}
+
+  Significance of changes:
+  \begin{itemize}
+    \item Indexing time for Radix Tree $O(logn) >$ Index time for hash table $O(1)$
+    \item Radix Tree only occupies as much memory as there are blocks in the
+    cache and doesn't have the drawbacks of sparse hash tables
+    \item Eviction is now done based on recency or frequency of use rather than
+    arbitrary hash collisions
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Modifications}
+
+  Original definition for cache structure:
+  \begin{adjustbox}{width=\textwidth,keepaspectratio}
+    \lstinputlisting{cache_struct.c}
+  \end{adjustbox}
+
+  \vspace{\baselineskip}
+
+  New definition for cache structure:
+  \begin{adjustbox}{width=\textwidth,keepaspectratio}
+    \lstinputlisting{cache_struct_new.c}
+  \end{adjustbox}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Modifications (cont.)}
+
+  \begin{adjustbox}{width=\textwidth,keepaspectratio}
+    \lstinputlisting{new_cache_hit.c}
+  \end{adjustbox}
+
+\end{frame}
 
 \end{document}
