@@ -36,6 +36,67 @@ performance gains for the workload. This also saves energy as the requests are
 now being satisfied by a more power efficient storage mechanism than standard
 mechanical drives.
 
+\subsection{Disk and SSD Power Consumption}
+
+\begin{table}
+  \centering
+  \resizebox{\linewidth}{!}
+  {
+    \begin{tabular}{|l|l|l|l|l|l|}
+      \hline
+      \bf Disk-State & \bf Watts & \bf Inc. from Inactive & \bf Disk-State & \bf
+      Watts & \bf Inc. from Inactive \\ \hline
+      HDD-Inactive:       & 142.7 & +0   & SSD-Inactive:       & 130.1 & +0   \\
+      \hline
+      HDD-Idle:           & 146.7 & +4   & SSD-Idle:           & 130.8 & +0.7 \\
+      \hline
+      HDD-Active (Read):  & 149.9 & +7.2 & SSD-Active (Read):  & 133.6 & +3.5 \\
+      \hline
+      HDD-Active (Write): & 150.3 & +7.6 & SSD-Active (Write): & 135.2 & +5.1 \\
+      \hline
+    \end{tabular}
+  }
+  \caption{Power consumption of HDD's vs. SSD's}
+  \label{tab:power-consumption}
+\end{table}
+
+We performed some simple benchmarking tests on HDD's and SSD's to get an insight
+of their respective power consumption. Table~\ref{tab:power-consumption} shows
+the results for disks that we are currently using in a cluster in our lab.
+
+\begin{table}
+  \centering
+  \resizebox{\linewidth}{!}
+  {
+    \begin{tabular}{|l|l|l|l|}
+      \hline
+      \bf Disk-Operation & \bf Energy Consumed (J) & \bf Disk-Operation & \bf
+      Energy Consumed (J) \\ \hline
+      HDD-Read:  & 734.2  & SSD-Read:  & 212.5 \\ \hline
+      HDD-Write: & 1127.8 & SSD-Write: & 561.2 \\ \hline
+    \end{tabular}
+  }
+  \caption{Energy consumption of read and write operations for 12GB files}
+  \label{tab:energy-consumption}
+\end{table}
+
+These results show the power consumption during a second for a specific power
+state of the disk, in comparison to running the system with an inactive
+drive. The power consumption during idle disk states shows that HDD's consume
+more than four times the power consumption of an SSD. The reason for this is
+that HDD's are constantly spinning even when not serving I/O requests, whereas
+SSD's use very little power since they don't possess any mechanical parts. When
+we add the additional power consumption of sequential I/O operations, reads
+consume more than twice the power in comparison to SSD's.
+
+These figures were obtained while performing write and read operations for a
+12GB file. They are the average of the power consumption for each
+operation. Based on these figures the energy consumed for each operation can be
+seen in Table~\ref{tab:energy-consumption}.
+
+The results show that there's a clear advantage to using SSD's instead of HDD's
+when it comes to energy savings.
+
 \subsection{DM-Cache}
 
 \begin{figure}

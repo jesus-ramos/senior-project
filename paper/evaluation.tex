@@ -1,4 +1,94 @@
 \section{Evaluation}
 \label{sec:evaluation}
 
+In this section we present the results of evaluating the energy-saving effects
+of using a block-level solution on a SAN environment. There are two
+configurations that are compared; the first is the baseline case where a client
+machine accesses its back-end storage through an iSCSI connection to a remoter
+storage server. In this case, both client and server machines are utilized when
+I/O is performed. The client's memory capacity will determine the amount of data
+that is cached from the server-side and thus the amount of interactions with the
+server. As for the DM-Cache setup, an SSD is used an as additional cache layer
+between the client and the server. This layer provides a larger capacity to
+cache more data from the server-side, and thus reduce interactions with it. Two
+kinds of configurations of DM-Cache are tested; one that caches data from read
+operations but sends writes directly to the source device, and one configuration
+that caches data from both read and write operations.
+
 \subsection{Experimental Setup}
+
+These tests were performed on two nodes that are part of a Dell 2970
+cluster. The source device and the cache device were in separate servers, which
+are running Linux 2.6.32 on Ubuntu with 24 GB of RAM.  The initiator (client) is
+connected to the target device (source device) using the iSCSI protocol. The
+initiator server contained the two disks, an HDD that was used as local storage,
+and an SSD that was used as the cache device. The HDD was a 1 TB Seagate
+Constellation ES 7200 RPM disk. The SSD cache was a 120 GB Intel SSD 320
+Series. The target server (storage server) contained four 1TB HDD with
+specifications similar to the one used in the initiator server. One of these was
+used for local storage, and another was used as the source device. The remaining
+two were not used as part of the tests. For every test DM-Cache was configured
+to use a block size of 8 sectors, an associativity of 256, and a cache size of
+64 GB. As for the benchmarking tool, IOzone 3.398 was used. All I/O operations
+were done on a file of size of 8GB or 12GB, and with a request size of 4 KB.
+
+\subsection{Measuring Power Consumption}
+
+In order to measure the power consumption of a node we used the Watts up? PRO
+power meter \cite{wattsup}. This power meter measures the power consumption in
+watts with an interval as fast as one second. It came with a USB cable adapter
+which we used in combination with an open-source Linux utility tool in order to
+download the data directly to a PC.
+
+\subsection{Workloads}
+
+There are several workloads that can receive potential power consumption saving
+from using client-side caching. Specifically, clients will benefit more when the
+workloads access data that has already been cached to the client-side SSD
+device. A system that uses dm-cache with writeback configuration can support
+operations like these. For example, write and read operations which produce hits
+on the cache will reduce load on the server-side storage device, and at the same
+time reduce the amount of power consumed on the storage server. For the baseline
+system setup, a read may be served from the system’s page cache, but writes will
+always have to be dispatched to the storage server. This results in a constant
+use of the server storage device.
+
+Because of the nature of a cache device, we also consider the effect of cache
+misses on power consumption. Cache misses caused by operations like a cold read
+will inevitably have greater power consumption than the current iSCSI
+system. This is because they result in a read operation to read data from the
+server storage, and a write operation to write data on the client-side SSD
+cache. Thus, workloads that have greater cache hit ratios are the most
+appropriate for this type of system.
+
+\subsection{Energy Consumption Results}
+
+\begin{table}
+  \centering
+  \resizebox{\linewidth}{!}
+  {
+    \begin{tabular}{|l|l|l|l|l|}
+      \hline & \bf iSCSI-W & \bf DMC-WT & \bf DMC-WB-M & \bf DMC-WB-H \\ \hline
+      Client & 15589.3     & 16035.6    & 13316.2      & 11664.2      \\ \hline
+      Server & 17754.7     & 17874.1    & 14479.4      & 13170.5      \\ \hline
+      Total  & 33344       & 33909.7    & 27795.6      & 24834.7      \\ \hline
+    \end{tabular}
+  }
+  \caption{Energy consumption (in Joules) of write operations using an 8GB file}
+  \label{tab:write-energy}
+\end{table}
+
+\begin{table}
+  \centering
+  \resizebox{\linewidth}{!}
+  {
+    \begin{tabular}{|l|l|l|l|}
+      \hline & \bf iSCSI-R & \bf DMC-R-M & \bf DMC-R-H \\ \hline
+      Client & 13168.8     & 16163.8     & 9119.3      \\ \hline
+      Server & 15189       & 18068.1     & 10363.8     \\ \hline
+      Total  & 28537.8     & 34231.9     & 19483.1     \\ \hline
+    \end{tabular}
+  }
+  \caption{Energy consumption (in Joules) of read operations using an 8GB file}
+  \label{tab:read-energy}
+\end{table}
