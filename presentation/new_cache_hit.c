@@ -4,9 +4,8 @@ static int cache_hit(struct cache_c *dmc, struct bio *bio,
     ...
     /* LRU */
     down(&dmc->lru_mutex);
-    list_move_tail(&cache->list, dmc->lru); /* Move recently addressed block
-                                             * to the front of the LRU
-                                             */
+    /* Move recently addressed block to the front of the LRU */
+    list_move_tail(&cache->list, dmc->lru);
     up(&dmc->lru_mutex);
     ...
 }

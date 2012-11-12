@@ -40,6 +40,7 @@
     \item Size of cache has to be power of 2 due to hashing function used
     \item Hash table occupies a lot of memory in RAM
     \item Evictions have no notion of block use or frequency of access
+    \item Possibility of ``wasteful'' entries in table (empty entries)
   \end{itemize}
 
 \end{frame}
@@ -65,7 +66,7 @@
 \end{frame}
 
 \begin{frame}
-  \frametitle{Modifications}
+  \frametitle{Modifications - Cache Struct}
 
   Original definition for cache structure:
   \begin{adjustbox}{width=\textwidth,keepaspectratio}
@@ -82,10 +83,28 @@
 \end{frame}
 
 \begin{frame}
-  \frametitle{Modifications (cont.)}
+  \frametitle{Modifications - Cache Hit}
 
   \begin{adjustbox}{width=\textwidth,keepaspectratio}
     \lstinputlisting{new_cache_hit.c}
+  \end{adjustbox}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Modifications - Cache Miss}
+
+  \begin{adjustbox}{width=\textwidth,keepaspectratio}
+    \lstinputlisting{new_cache_miss.c}
+  \end{adjustbox}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Modifications - Cache Eviction}
+
+  \begin{adjustbox}{width=\textwidth,keepaspectratio}
+    \lstinputlisting{new_cache_invalidate.c}
   \end{adjustbox}
 
 \end{frame}
