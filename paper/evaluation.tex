@@ -96,7 +96,7 @@ appropriate for this type of system.
 In order to get a general idea of the difference between the power consumption
 of I/O requests which are served from the cache device, and those that are
 served from the storage server, we performed simple sequential I/O operations
-using a tool like IOzone. Table~\ref{tab:write-energy} shows the energy
+using a tool like IOzone. Table ~\ref{tab:write-energy} shows the energy
 consumption of both the client and server machines when performing write
 requests. The second column (iSCSI-W) shows the energy consumption of writes
 performed on with the plain iSCSI system setup. This is the value that we'll use
@@ -113,7 +113,7 @@ storage in comparison the number of writes done on the SSD. The last operation
 involves writes that produce cache hits. These are the fastest and also the most
 energy efficient of all operations.
 
-Table~\ref{tab:read-energy} shows the energy consumption of sequential read
+Table ~\ref{tab:read-energy} shows the energy consumption of sequential read
 requests. The second columns shows the energy consumed by reads performed on the
 system without DM-Cache. The next column shows the results of read misses using
 DM-Cache. The results in this particular category show the additional energy
@@ -164,14 +164,14 @@ write-through configuration of DM-Cache. This DM-Cache operation is equivalent
 to the regular iSCSI because only reads are served from the cache device, but
 write requests are left to be directed to the source device as they normally
 would. This means that it is expected that the performance of the iSCSI-W and
-the DMC-WT operations be the same or close. Either
-Figure~\ref{fig:client-writes} or Figure~\ref{fig:server-writes} can be checked
-to confirm that the execution time for these two operations is close, therefore
+the DMC-WT operations be the same or close. Either Figure
+~\ref{fig:client-writes} or Figure ~\ref{fig:server-writes} can be checked to
+confirm that the execution time for these two operations is close, therefore
 translating to a similar throughput. A slight increase in power consumption is
 seen on the client-side but very little difference on the server-side. The next
 test shows the power consumption of DMC-WB-M, which is a write operation that
 results in cache misses when performed on the write-back configuration of
-DM-Cache. Figure~\ref{fig:client-writes} shows that this operation contains
+DM-Cache. Figure ~\ref{fig:client-writes} shows that this operation contains
 several spikes of high power consumption on the client-side machine. The reason
 for which this operation consumes less energy than an iSCSI-W is that this
 operation takes less time to execute and also the power consumption on the
@@ -182,8 +182,7 @@ power consumption rate on both the client and server-side, and also has a much
 faster execution time. This results in the operation that consumes the least
 amount of energy.
 
-% where is figure 6? %
-Figure~\ref{fig:client-reads} and Figure~\ref{fig:server-reads} show the power
+Figure ~\ref{fig:client-reads} and Figure ~\ref{fig:server-reads} show the power
 consumption of reads on the client and the server side, respectively. The
 operation DMC-RM are the reads that are performed on the write-back
 configuration of dm-cache that are done on data that is not on the cache device
@@ -193,9 +192,10 @@ operation to bring in the data from the source device and another operation to
 store this data on the SSD cache device. These additional I/O requests result in
 a slower throughput and more energy consumption on both client and server-side,
 in comparison to the baseline iSCSI-R operation.  The other read operation,
-DMC-RH, shows the power consumption cause by read cache hits. Figure 6 shows
-that initially the power consumption of this operation on the client-side is
-similar or slightly higher than the iSCSI-R operations; however, because of its
-shorter execution time the operation results in lower energy consumption. On the
-server-side power consumption remains low because the HDD source device remains
-idle since all read requests are served from the cache device.
+DMC-RH, shows the power consumption cause by read cache hits. Figure
+~\ref{fig:server-reads} shows that initially the power consumption of this
+operation on the client-side is similar or slightly higher than the iSCSI-R
+operations; however, because of its shorter execution time the operation results
+in lower energy consumption. On the server-side power consumption remains low
+because the HDD source device remains idle since all read requests are served
+from the cache device.
