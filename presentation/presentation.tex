@@ -5,6 +5,9 @@
 
 \usepackage{adjustbox}
 \usepackage{listings}
+\usepackage{algorithmicx}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
 
 \lstset{
   language=C,
@@ -63,6 +66,46 @@
     \item Eviction is now done based on recency or frequency of use rather than
     arbitrary hash collisions
   \end{itemize}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Algorithm - LRU}
+
+  \begin{algorithmic}
+    \State $block \gets$ look-up requested block in $radix\_tree$
+    \If {$block$ is not cached}
+      \If {$cache$ is full}
+        \State evict from tail of $lru\_list$
+      \EndIf
+      \State initialize new $block$
+      \State insert $block$ into $radix\_tree$
+    \EndIf
+    \State move $block$ to head of $lru\_list$
+  \end{algorithmic}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Algorithm - LFU}
+
+  \begin{algorithmic}
+    \State $block \gets$ look-up requested block in $radix\_tree$
+    \If {$block$ is not cached}
+      \If {$cache$ is full}
+        \State evict from tail of $lfu\_list$
+      \EndIf
+      \State initialize new $block$
+      \State insert $block$ into $radix\_tree$
+      \State insert $block$ at tail of $lfu\_list$ with $hit\_count$ of $1$
+    \Else
+      \State $block.hit\_count \gets block.hit\_count + 1$
+      \State $next\_block \gets$ adjacent entry of $block$ from $lfu\_list$
+      \If {$block.hit\_count \geq next\_block.hit\_count$}
+        \State swap $block$ and $next\_block$ in place
+      \EndIf
+    \EndIf
+  \end{algorithmic}
 
 \end{frame}
 
