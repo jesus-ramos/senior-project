@@ -1,0 +1,17 @@
+\begin{algorithmic}
+  \State $block \gets$ look-up requested block in $radix\_tree$
+  \If {$block$ is not cached}
+    \If {$cache$ is full}
+      \State evict from tail of $lfu\_list$
+    \EndIf
+    \State initialize new $block$
+    \State insert $block$ into $radix\_tree$
+    \State insert $block$ at tail of $lfu\_list$ with $hit\_count$ of $1$
+  \Else
+    \State $block.hit\_count \gets block.hit\_count + 1$
+    \State $next\_block \gets$ adjacent entry of $block$ from $lfu\_list$
+    \If {$block.hit\_count \geq next\_block.hit\_count$}
+      \State swap $block$ and $next\_block$ in place
+    \EndIf
+  \EndIf
+\end{algorithmic}

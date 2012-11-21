@@ -1,0 +1,11 @@
+\begin{algorithmic}
+  \State $block \gets$ look-up requested block in $radix\_tree$
+  \If {$block$ is not cached}
+    \If {$cache$ is full}
+      \State evict from tail of $lru\_list$
+    \EndIf
+    \State initialize new $block$
+    \State insert $block$ into $radix\_tree$
+  \EndIf
+  \State move $block$ to head of $lru\_list$
+\end{algorithmic}
