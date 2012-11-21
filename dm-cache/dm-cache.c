@@ -334,8 +334,7 @@ static int kcached_get_pages(struct cache_c *dmc, unsigned int nr,
 	}
 
 	dmc->nr_free_pages -= nr;
-	for (*pages = pl = dmc->pages; --nr; pl = pl->next)
-		;
+	for (*pages = pl = dmc->pages; --nr; pl = pl->next);
 
 	dmc->pages = pl->next;
 	pl->next = NULL;
@@ -931,7 +930,8 @@ static void write_back(struct cache_c *dmc,struct cacheblock *cache, unsigned in
 /****************************************************************************
  *  Functions for implementing the various cache operations.
  ****************************************************************************/
-static sector_t get_block_index(sector_t block, int disk){
+static sector_t get_block_index(sector_t block, int disk)
+{
 	return ( block + virtual_mapping[disk].dev_offset);
 }
 
@@ -975,6 +975,9 @@ static void cache_invalidate(struct cache_c *dmc, struct cacheblock *cache)
 
 	/* down(&dmc->lru_mutex); */
 	/* list_del(&cache->list); */
+#ifdef CONFIG_LFU
+	cache->hits = 1;
+#endif /* CONFIG_LFU */
 	radix_tree_delete(dmc->cache,
 			get_block_index(cache->block,cache->disk));
 	/* up(&dmc->lru_mutex); */
@@ -1331,8 +1334,7 @@ static int cache_map(struct dm_target *ti, struct bio *bio,
 		virtual_mapping[disk].writes++;
 	}
 
-	if(is_state(virtual_mapping[disk].state,ENABLED)){
-
+	if(is_state(virtual_mapping[disk].state,ENABLED)) {
 		cache = radix_tree_lookup(dmc->cache,
 					get_block_index(request_block,disk));
 		DPRINTK("Lookup for %lu (v_disk:%d index:%lu)",
@@ -1489,12 +1491,12 @@ static int cache_ctr(struct dm_target *ti, unsigned int argc, char **argv)
 		virtual_mapping[idx_mapping].identifier = idx_mapping;
 		if(idx_mapping >= 0)
 			strcpy(virtual_mapping[idx_mapping].vm_id,argv[7]);
-		else{
+		else {
 			ti->error = "dm-cache: Virtual Machine identifier already exits";
 			r = -EINVAL;
 			goto bad2;
 		}
-	}else{
+	} else {
 		ti->error = "dm-cache: Requires Virtual Machine identifier";
 		r = -EINVAL;
 		goto bad2;
@@ -1681,7 +1683,7 @@ static int cache_ctr(struct dm_target *ti, unsigned int argc, char **argv)
 		sizeof(*dmc->lru);
 
 	// Check system information
-	si_meminfo (&sys_info);
+	si_meminfo(&sys_info);
 	printk("Free memory before: %lu needed:%lu\n",sys_info.freeram,(order>0 ? (order>>10)/4 : 0));
 
 	if(sys_info.freeram < (order>>10)/4){
@@ -1695,7 +1697,7 @@ static int cache_ctr(struct dm_target *ti, unsigned int argc, char **argv)
 	}
 
 	/* Allocating all the space for Metadata  */
-	dmc->cache = (struct radix_tree_root *) vmalloc(sizeof(*dmc->cache));
+	dmc->cache = (struct radix_tree_root *)vmalloc(sizeof(*dmc->cache));
 	if (!dmc->cache) {
 		ti->error = "Unable to allocate memory";
 		r = -ENOMEM;
@@ -1719,29 +1721,30 @@ static int cache_ctr(struct dm_target *ti, unsigned int argc, char **argv)
 	goto bad6;
 	}*/
 
-	dmc->blocks = (struct cacheblock *) vmalloc(dmc->size * (sizeof(struct cacheblock)));
+	dmc->blocks = (struct cacheblock *)vmalloc(dmc->size *
+						(sizeof(struct cacheblock)));
 	if(dmc->blocks == NULL) {
 		ti->error = "Unable to allocate memory for dmc cache blocks";
 		r = -ENOMEM;
 		goto bad8;
 	}
 
-	setup_timer(&dmc->reboot_time, (void *)reboot_map, (unsigned long )NULL );
-
+	setup_timer(&dmc->reboot_time, (void *)reboot_map,
+		(unsigned long )NULL);
 
 	DMINFO("Allocate %llukB (%luB per) mem for %llu-entry cache" \
 		"(capacity:%lluMB, associativity:%u, block size:%u " \
 		"sectors(%uKB), %s)",
-		(unsigned long long) order >> 10, (unsigned long) sizeof(struct cacheblock),
-		(unsigned long long) dmc->size,
-		(unsigned long long) data_size >> (20-SECTOR_SHIFT),
+		(unsigned long long)order >> 10,
+		(unsigned long)sizeof(struct cacheblock),
+		(unsigned long long)dmc->size,
+		(unsigned long long)data_size >> (20-SECTOR_SHIFT),
 		dmc->assoc, dmc->block_size,
 		dmc->block_size >> (10-SECTOR_SHIFT),
 		dmc->write_policy ? "write-back" : "write-through");
 
 	si_meminfo (&sys_info);
 	printk("Free memory After : %lu\n",sys_info.freeram);
-
 
 	for (i=0; i < dmc->size; i++) {
 		bio_list_init(&dmc->blocks[i].bios);
