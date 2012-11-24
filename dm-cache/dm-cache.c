@@ -1881,6 +1881,8 @@ static void cache_dtr(struct dm_target *ti)
 		vfree((void *)dmc->lru);
 		vfree((void *)dmc->cache);
 
+		dm_io_client_destroy(dmc->io_client);
+
 		blkdev_put(dd->dm_dev.bdev, 0);
 		DPRINTK("put global cache to destroy: %d",cnt_active_map);
 

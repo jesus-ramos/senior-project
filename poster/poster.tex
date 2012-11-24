@@ -4,15 +4,22 @@
   \usetheme{Custom}
 }
 
-\usepackage{times}
+\usepackage[english]{babel}
+\usepackage[orientation=portrait,size=a0,scale=1.4,debug]{beamerposter}
 \usepackage{adjustbox}
 \usepackage{algpseudocode}
 \usepackage{amsmath,amsthm,amssymb,latexsym}
-\usepackage[english]{babel}
-\usepackage[orientation=portrait,size=a0,scale=1.4,debug]{beamerposter}
 \usepackage{hyperref}
+\usepackage{listings}
+\usepackage{times}
+
+\lstset{
+  language=C,
+  keywordstyle=\color{blue}
+}
 
 \boldmath
+
 \hypersetup{
   colorlinks,
   linkcolor=,
@@ -32,14 +39,27 @@
 \begin{frame}{}
 
   \begin{columns}
-
     \begin{column}{.33\linewidth}
       \begin{block}{\large Problem Statement}
+        Choosing an effective cache management policy for your caches can make a
+        huge difference when it comes to application performance. This is
+        especially true for I/O intensive applications where a miss can take
+        anywhere from 6 milliseconds to even a couple of seconds if the request
+        goes to an idle disk. Placing some of this data on a local solid state
+        drive can improve I/O response time from the data read from the SSD to
+        somewhere between 500 microseconds and 1 millisecond.
       \end{block}
     \end{column}
 
     \begin{column}{.33\linewidth}
       \begin{block}{\large Current Solutions}
+        DM-Cache currently implements a hash based eviction policy. Rather than
+        using recency information eviction is done based on hash
+        collisions. DM-Cache uses the kernel function \texttt{hash\_long()} to
+        generate a 64 bit hash value based on the sector number of the
+        request. When two requests map to the same block the last one is
+        invalidated and flushed if need be and then evicted to make room for the
+        new block.
       \end{block}
     \end{column}
 
@@ -80,9 +100,54 @@
       \end{column}
 
       \begin{column}{.33\textwidth}
+
+        \textbf{Policies:} \\
+
+        Least Recently Used (LRU) and Least Frequently Used (LFU) were chosen as
+        the eviction policies to implement as they are the most popular eviction
+        policies and can be proven to outperform others in the most cases. To
+        the left the algorithms are detailed in the context of how they perform
+        in DM-Cache.
+
       \end{column}
 
     \end{columns}
+
+    \textbf{Updating the Code-base:} \\
+
+    The implementation of DM-Cache used as a base was written for kernel
+    2.6.19. This version is pretty outdated as the new stable kernel version is
+    2.6.36 so the code-base was updated to this newer version. The documentation
+    for the device mapper functionality in the kernel hasn't been updated (and
+    as of writing even in 3.0 the documentation is still out of date) so to
+    figure out the changes I had to delve into the code.
+
+    \vspace{\baselineskip}
+
+    Device mapper changed its memory request scheme for allocating memory for
+    I/O requests that must pass through the device mapper. The old method for
+    accomplishing this involves requesting pages through the
+    \texttt{dm\_io\_get()} function and then later using \texttt{dm\_io\_put()}
+    to release the pages when they are no longer needed. These functions were
+    removed in later kernels and replaced with a structure called
+    \texttt{dm\_io\_client}. This allowed many users of device mapper to share
+    pages instead of having to make separate requests for each device mapper
+    pseudo-device. Requests are now done by creating a client by calling
+    \texttt{dm\_io\_client\_create()} in much the same way the previous function
+    was called and its counterpart \texttt{dm\_io\_client\_destroy()} to release
+    the used pages.
+
+    \vspace{\baselineskip}
+
+    \textbf{Implementation:} \\
+
+    The hash table in DM-Cache was replaced with \texttt{struct
+      radix\_tree\_root} ordered by request sector numbers as well as the
+    addition of a \texttt{struct list\_head} to maintain the LRU and LFU lists
+    such that candidates for eviction are always at the tail of the list. The
+    eviction policy was also modified so that whenever all available blocks have
+    been filled one is pulled from the tail of the list, invalidated, and
+    replaced with the most recently requested block.
 
   \end{block}
 
