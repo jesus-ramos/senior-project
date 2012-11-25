@@ -24,25 +24,29 @@ flash-based SSD's, but no advanced modeling technique is used
 \cite{ssd-energy-efficiency}. For the purpose of this paper, we use simple power
 monitoring tools to measure instantaneous power consumption.
 
-\subsection{Cache Partitioning and Replication}
+\subsection{SSD Caching}
 
-Previous work on replication shows how a simple key-value store can be used to
-hash keys to an unique destination node on traditional distributed systems
-\cite{chord} \cite{dynamo}. By using a ring-structured distributed hash table,
-high scalability is ensured by establishing an upper bound on the number of keys
-that each node is responsible for. In addition, the load across servers can be
-balanced by distributing the keys as evenly as possible across nodes on
-different clusters, and even across data centers\cite{dynamo}.
+% TODO
 
-The ring-based replication policy also makes the data highly available by
-maximizing the number of nodes that contain replicas. However, for this paper we
-will not consider availability, since data will be accessed by a single
-coordinator client. Our Device Mapper Cache implementation uses a key-value
-replication approach that is very similar to that found in \cite{chord} in order
-to cooperatively replicate the clean pages that are used least often, and
-invalidate without having read from disk again later. The objective is to
-maximize the working set across SSD caches in the storage network and give
-storage server HDD's more chances to remain spun down for a long period of time.
+% \subsection{Cache Partitioning and Replication}
+
+% Previous work on replication shows how a simple key-value store can be used to
+% hash keys to a unique destination node on traditional distributed systems
+% \cite{chord} \cite{dynamo}. By using a ring-structured distributed hash table,
+% high scalability is ensured by establishing an upper bound on the number of keys
+% that each node is responsible for. In addition, the load across servers can be
+% balanced by distributing the keys as evenly as possible across nodes on
+% different clusters, and even across data centers\cite{dynamo}.
+
+% The ring-based replication policy also makes the data highly available by
+% maximizing the number of nodes that contain replicas. However, for this paper we
+% will not consider availability, since data will be accessed by a single
+% coordinator client. Our Device Mapper Cache implementation uses a key-value
+% replication approach that is very similar to that found in \cite{chord} in order
+% to cooperatively replicate the clean pages that are used least often, and
+% invalidate without having read from disk again later. The objective is to
+% maximize the working set across SSD caches in the storage network and give
+% storage server HDD's more chances to remain spun down for a long period of time.
 
 \subsection{Disk Spin-down}
 

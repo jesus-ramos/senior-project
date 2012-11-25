@@ -36,6 +36,19 @@ performance gains for the workload. This also saves energy as the requests are
 now being satisfied by a more power efficient storage mechanism than standard
 mechanical drives.
 
+Figure \ref{fig:dm-cache} shows local SSD caching in practice in the cloud
+environment. Multiple nodes are connected to a Storage Area Network where the
+centralized storage is located. When these nodes need to access data located on
+the central storage server they have to issue a request to it. Since multiple
+nodes are using this storage server this means that this request may have to
+wait for others to complete before it can be completed. Using a local cache
+device on the client node it is possible to cache some of these requests such
+that subsequent requests do not need to go to the central storage server. This
+alleviates wait times on the storage server since less requests are sent to it
+and reduces the time that an application has to wait for a request since the
+information is now on a local cache device which has a much faster response
+time.
+
 \subsection{Disk and SSD Power Consumption}
 
 \begin{table}[t]
