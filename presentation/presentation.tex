@@ -4,14 +4,18 @@
 \usecolortheme{beaver}
 
 \usepackage{adjustbox}
-\usepackage{listings}
 \usepackage{algorithmicx}
 \usepackage{algorithm}
 \usepackage{algpseudocode}
+\usepackage{color}
+\usepackage{listings}
+
+\definecolor{dkgreen}{RGB}{5,93,16}
 
 \lstset{
   language=C,
   keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen}
 }
 
 \title[Cache Management]{
@@ -96,6 +100,16 @@
   New definition for cache structure:
   \begin{adjustbox}{width=\textwidth,keepaspectratio}
     \lstinputlisting{../snippets/cache_struct_new.c}
+  \end{adjustbox}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Modifications - Cacheblock Struct}
+
+  Additions to cacheblock structure for LFU:
+  \begin{adjustbox}{width=\textwidth,keepaspectratio}
+    \lstinputlisting{../snippets/new_cacheblock_struct.c}
   \end{adjustbox}
 
 \end{frame}

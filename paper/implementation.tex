@@ -17,6 +17,12 @@ algorithms.
 
 \subsection{Dynamic Disk Spin}
 
+\begin{figure}[t]
+  \caption{Client Server Daemon Communication Architecture}
+  \centering \includegraphics[width=\linewidth]{daemon.png}
+  \label{fig:daemon}
+\end{figure}
+
 In our implementation, we use a user space daemon that interacts with the
 storage server for dynamically spinning the disk up or down. The setup for the
 spinning mechanism includes the user space client daemon, a web server that
@@ -29,5 +35,5 @@ client daemon successfully sends a spin up request to the storage server and the
 storage server responds with an acknowledgment, confirming that the disk is
 spinning. The mechanism for communication between user space and kernel space is
 an in-memory data structure that is exported as a Linux proc file system file
-for access by user applications, Both our modified DM-Cache module and the
+for access by user applications. Both our modified DM-Cache module and the
 client daemon will read from and write to this file.
