@@ -21,6 +21,15 @@ multiple clients at a time. With this kind of storage bottlenecks such as
 network bandwidth and I/O throughput can play large roles in both performance
 and power consumption.
 
+One common use of SAN's is for storage consolidation, allowing any node that
+services requests to access certain user data simplifies storage maintenance and
+data migration. This is extremely useful in situations where requests to clients
+are not always serviced by the same node and data migration between nodes could
+prove to be costly. SAN's are also useful in situations where large amounts of
+storage needs to be aggregated and backed up regularly. Having a lot of storage
+on a single node is easier than having the same amount of storage spread across
+multiple nodes.
+
 \subsection{Local SSD Caching}
 
 Usage of SSD's as primary storage is impractical because of cost and storage
@@ -36,7 +45,7 @@ performance gains for the workload. This also saves energy as the requests are
 now being satisfied by a more power efficient storage mechanism than standard
 mechanical drives.
 
-Figure \ref{fig:dm-cache} shows local SSD caching in practice in the cloud
+Figure~\ref{fig:dm-cache} shows local SSD caching in practice in the cloud
 environment. Multiple nodes are connected to a Storage Area Network where the
 centralized storage is located. When these nodes need to access data located on
 the central storage server they have to issue a request to it. Since multiple
@@ -74,7 +83,7 @@ time.
 \end{table}
 
 We performed some simple benchmarking tests on HDD's and SSD's to get an insight
-of their respective power consumption. Table ~\ref{tab:power-consumption} shows
+of their respective power consumption. Table~\ref{tab:power-consumption} shows
 the results for disks that we are currently using in a cluster in our lab.
 
 \begin{table}[t]
@@ -105,7 +114,7 @@ consume more than twice the power in comparison to SSD's.
 These figures were obtained while performing write and read operations for a
 12GB file. They are the average of the power consumption for each
 operation. Based on these figures the energy consumed for each operation can be
-seen in Table ~\ref{tab:energy-consumption}.
+seen in Table~\ref{tab:energy-consumption}.
 
 The results show that there's a clear advantage to using SSD's instead of HDD's
 when it comes to energy savings.
@@ -122,7 +131,7 @@ DM-Cache, or Device Mapper Cache, is a block-level caching mechanism implemented
 as a module in the Linux kernel \cite{DM-Cache}. It allows for specification of
 a local SSD as a cache device where recently used blocks can be stored for
 faster access time. It supports both write-back and write-through functionality
-for handling cached data. Figure ~\ref{fig:dm-cache} shows the architecture of
+for handling cached data. Figure~\ref{fig:dm-cache} shows the architecture of
 DM-Cache.
 
 The purpose of DM-Cache is to cache recently used blocks on local storage

@@ -1,3 +1,20 @@
 \section{Future Work}
 \label{sec:future}
 
+\subsection{Dynamic Disk Spinning}
+
+For the purpose of this paper a very basic algorithm was used for the spinning
+up and down of disks on the storage node. This work can be expanded by using
+more complicated algorithms that take into account prefetching as well as some
+prediction schemes based on how data is being requested. The long term effects
+of such spinning up and down of disks can also be examined and how this would
+affect the life of the disks.
+
+\subsection{Cache Management Algorithms in DM-Cache}
+
+In this paper we implemented two common algorithms into DM-Cache, namely LRU and
+LFU. This work could be extended by making the cache management policy in
+DM-Cache modular and allowing for more algorithms to be implemented. With
+DM-Cache now having the ability to handle caches for distinct virtual machines
+this can have added benefits as you can specify different caching policies per
+virtual machine which better suit the workload.
