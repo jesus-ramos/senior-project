@@ -120,22 +120,27 @@
     2.6.36 so the code-base was updated to this newer version. The documentation
     for the device mapper functionality in the kernel hasn't been updated (and
     as of writing even in 3.0 the documentation is still out of date) so to
-    figure out the changes I had to delve into the code.
+    figure out the changes I had to delve into the code. One of the most notable
+    and hard to track changes was the removal of the \texttt{dm\_io\_get()} and
+    \texttt{dm\_io\_put()} functions. Their removal was not documented although
+    after some tracking I found that they were replaced by a \texttt{struct
+      dm\_io\_client} and two new functions \texttt{dm\_io\_client\_create()}
+    and \texttt{dm\_io\_client\_destroy()}. This allows modules that make use of
+    the device mapper to allocate private memory pools and block I/O sets so
+    that they do not contend for memory.
 
-    \vspace{\baselineskip}
-
-    Device mapper changed its memory request scheme for allocating memory for
-    I/O requests that must pass through the device mapper. The old method for
-    accomplishing this involves requesting pages through the
-    \texttt{dm\_io\_get()} function and then later using \texttt{dm\_io\_put()}
-    to release the pages when they are no longer needed. These functions were
-    removed in later kernels and replaced with a structure called
-    \texttt{dm\_io\_client}. This allowed many users of device mapper to share
-    pages instead of having to make separate requests for each device mapper
-    pseudo-device. Requests are now done by creating a client by calling
-    \texttt{dm\_io\_client\_create()} in much the same way the previous function
-    was called and its counterpart \texttt{dm\_io\_client\_destroy()} to release
-    the used pages.
+    % Device mapper changed its memory request scheme for allocating memory for
+    % I/O requests that must pass through the device mapper. The old method for
+    % accomplishing this involves requesting pages through the
+    % \texttt{dm\_io\_get()} function and then later using \texttt{dm\_io\_put()}
+    % to release the pages when they are no longer needed. These functions were
+    % removed in later kernels and replaced with a structure called
+    % \texttt{dm\_io\_client}. This allowed many users of device mapper to share
+    % pages instead of having to make separate requests for each device mapper
+    % pseudo-device. Requests are now done by creating a client by calling
+    % \texttt{dm\_io\_client\_create()} in much the same way the previous function
+    % was called and its counterpart \texttt{dm\_io\_client\_destroy()} to release
+    % the used pages.
 
     \vspace{\baselineskip}
 
@@ -148,6 +153,15 @@
     eviction policy was also modified so that whenever all available blocks have
     been filled one is pulled from the tail of the list, invalidated, and
     replaced with the most recently requested block.
+
+    \vspace{\baselineskip}
+
+    While the implementation sounds straight forward it required changes to
+    around 1200 lines of code. This is due to the fact that the hash table was
+    always accessed directly so every reference to that had to be changed. There
+    was also additional code to be written that had to handle the new policies
+    compounded on top of the changes required to make the module functional in
+    version 2.6.36 of the kernel.
 
   \end{block}
 
