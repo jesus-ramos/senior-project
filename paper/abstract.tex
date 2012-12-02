@@ -1,5 +1,19 @@
 \begin{abstract}
 
-  % placeholder
+  In this paper, we explore ways to save power with Device Mapper Cache
+  (DM-Cache). We devise an online power monitoring scheme using the Watts Up?
+  Pro power meter to evaluate our implementation.  The current version of DM
+  Cache offers high performance by keeping a portion of the working set of
+  processes in a local cache, where data can be accessed faster than when it is
+  stored on the storage server disk.
+
+  Our preliminary results indicate that DM Cache uses less power in Write Back
+  (WB) mode for both cache hits and cache misses. To improve on the initial
+  power saving, we implement a hybrid cache management policy with Least
+  Recently Used (LRU) as the replacement policy for workloads with temporal
+  locality, and Least Frequently Used (LFU) for workloads with no apparent
+  locality. We also implement a spin down policy to save power on the storage
+  server when there is low disk activity, such as when the cache is large enough
+  to hold the entire working set of running programs.
 
 \end{abstract}
