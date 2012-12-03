@@ -29,8 +29,9 @@ specifications similar to the one used in the initiator server. One of these was
 used for local storage, and another was used as the source device. The remaining
 two were not used as part of the tests. For every test DM-Cache was configured
 to use a block size of 8 sectors, an associativity of 256, and a cache size of
-64 GB. As for the benchmarking tool, IOzone 3.398 was used. All I/O operations
-were done on a file of size of 8GB or 12GB, and with a request size of 4 KB.
+64 GB. As for the benchmarking tool, IOzone 3.398 and Filebench were used. All
+I/O operations were done on a file of size of 8GB or 12GB, and with a request
+size of 4 KB.
 
 \subsection{Measuring Power Consumption}
 
@@ -49,7 +50,7 @@ device. A system that uses DM-Cache with write-back configuration can support
 operations like these. For example, write and read operations which produce hits
 on the cache will reduce load on the server-side storage device, and at the same
 time reduce the amount of power consumed on the storage server. For the baseline
-system setup, a read may be served from the system’s page cache, but writes will
+system setup, a read may be served from the systems page cache, but writes will
 always have to be dispatched to the storage server. This results in a constant
 use of the server storage device.
 
@@ -61,7 +62,18 @@ server storage, and a write operation to write data on the client-side SSD
 cache. Thus, workloads that have greater cache hit ratios are the most
 appropriate for this type of system.
 
-\subsection{Energy Consumption Results}
+There are two types of benchmarks that were done in order to cover these cases.
+The first consisted of running micro-benchmarks using IOzone. IOzone is a simple
+filesystem benchmarking tool that can run a series of simple I/O patterns. For
+the purpose of this project we run the sequential reads and sequential writes
+operations.  The other kind of benchmarks that were performed were synthetic
+workloads using Filebench. Filebench is a benchmarking tool that supports
+emulating specific types workloads like fileservers, OLTP systems, web proxies,
+and many more workloads. A few of these workloads were run in order to get
+insight of the kind of applications that could benefit from the spin-down
+daemon.
+
+\subsection{Energy Consumption Results: Micro-Workloads}
 
 \begin{table}
   \centering
@@ -92,6 +104,7 @@ appropriate for this type of system.
   \caption{Energy consumption (in Joules) of read operations using an 8GB file}
   \label{tab:read-energy}
 \end{table}
+
 
 In order to get a general idea of the difference between the power consumption
 of I/O requests which are served from the cache device, and those that are
@@ -128,29 +141,29 @@ consumption. For operations where I/O's are served from the cache device, SSD's
 can save up to 25\% energy savings for write operations, and 32\% for read
 operations.
 
-\subsection{Analysis}
+\subsection{Micro-Benchmark Analysis}
 
 \begin{figure}[t]
-  \caption{Power consumption of write operations on the client}
   \centering \includegraphics[width=\linewidth]{client_writes.png}
+  \caption{Power consumption of write operations on the client}
   \label{fig:client-writes}
 \end{figure}
 
 \begin{figure}[t]
-  \caption{Power consumption of write operations on the server}
   \centering \includegraphics[width=\linewidth]{server_writes.png}
+  \caption{Power consumption of write operations on the server}
   \label{fig:server-writes}
 \end{figure}
 
 \begin{figure}[t]
-  \caption{Power consumption of read operations on the client}
   \centering \includegraphics[width=\linewidth]{client_reads.png}
+  \caption{Power consumption of read operations on the client}
   \label{fig:client-reads}
 \end{figure}
 
 \begin{figure}[t]
-  \caption{Power consumption of read operations on the server}
   \centering \includegraphics[width=\linewidth]{server_reads.png}
+  \caption{Power consumption of read operations on the server}
   \label{fig:server-reads}
 \end{figure}
 
@@ -199,3 +212,92 @@ operations; however, because of its shorter execution time the operation results
 in lower energy consumption. On the server-side power consumption remains low
 because the HDD source device remains idle since all read requests are served
 from the cache device.
+
+\subsection{Power Consumption: Synthetic Workloads}
+
+\begin{figure}[t]
+  \centering \includegraphics[width=\linewidth]{webserver-client.png}
+  \caption{Power consumption of client node of webserver workload}
+  \label{fig:webserver-client}
+\end{figure}
+
+\begin{figure}[t]
+  \centering \includegraphics[width=\linewidth]{webserver-server.png}
+  \caption{Power consumption of server node of webserver workload}
+  \label{fig:webserver-server}
+\end{figure}
+
+\begin{figure}[t]
+  \centering \includegraphics[width=\linewidth]{webproxy-client.png}
+  \caption{Power consumption of client node of webproxy workload}
+  \label{fig:webproxy-client}
+\end{figure}
+
+\begin{figure}[t]
+  \centering \includegraphics[width=\linewidth]{webproxy-server.png}
+  \caption{Power consumption of server node of webproxy workload}
+  \label{fig:webproxy-server}
+\end{figure}
+
+In order to explore the potential impact of the deamon module in dm-cache we ran
+synthetic workloads using the benchmarking tool Filebench. These tests consisted
+of running different workload personalities that come with the Filebench tool
+package. For these tests we evaluated a series of benchmarks, and chose two
+workloads.  The first type of workload that was used for the experiments was the
+Filebench webserver personality. This workload consists of emulating a simple
+webserver by running a series of open-read-close operations on multiple fles in
+a data directory and a log directory. This workload was chosen in order to
+observe the cost of running the version of dm-cache with the daemon where the
+application does not allow any instances to spin down the disk.  This workload
+had close to a 0\% cache hit ratio over the duration of the test which lasted
+for 30 minutes. Figure~\ref{fig:webserver-client} and
+Figure~\ref{fig:webserver-server} show the power consumption of this workloads.
+
+The first observation from these graphs is that the power consumption for both
+client and server is very close. In order to explain this behavior, we fist
+should observe the composition of the I/O requests dispatched by the
+benchmarking tool. During the beginning of the test, the tool writes a number of
+files which are used later for read operations. The graph of the server power
+consumption graph shows a momentary increase in power consumption for the iSCSI
+configuration and very little increase for the DMC-DAE configuration. This
+reflects the amount of I/O requests sent to the server for both
+configurations. For iSCSI this is a large increase since all the files written
+by Filebench are directed to the storage server disk. For DMC-DAE the increase
+in power is small because most data for the files are being written to the
+client-side SSD cache. In addition, while files were written to their respective
+device, the client's OS was also caching these in memory. This means that these
+files will be read from memory instead of the cache device or source
+device. This results in few I/O requests served by either the SSD cache or
+source device. The similar power consumption of both configurations in the
+server graph confirms this behavior. The reason why the server disk keeps
+spinning in the DMC-DAE configuration is that there are a series of intermittent
+cache read misses which result in data having to be fetched from the storage
+source device and then to the client's cache device.
+
+
+The second type of workload used is a webproxy which emulates the I/O activity
+of a simple web proxy.  This workload consists series of mixed create, read, and
+delete operations done on multiple files in a data and a log directory. This
+kind of workload was chosen because it produced a cache hit ratio of around
+70\%, which meant that the disk could have a chance chance to spin
+down. Figure~\ref{fig:webproxy-client} and Figure~\ref{fig:webproxy-server} show
+the power consumption of this workload in comparison the baseline case, after
+being run for 30 minutes. The graph of the power consumption of the server shows
+how the disk is spun down after a few minutes or running the tests, signaling
+that most IO requests are being served from the cache.
+
+The reason why this type of workload allows for the DMC-DAE configuration to
+spin down the disk is based on the characteristics of its I/O
+requests. Figure~\ref{fig:webproxy-server} shows the amount of I/O activity that
+the server handles.  Before time 600, both configurations show very little
+activity on the server-side, with the exception of an slight increase for the
+iSCSI configuration.  This spike lasts for the time it takes for the benchmark
+to write the test data for the files. This only happens for the iSCSI
+configuration and not for DMC-DAE because the data is cached on the client SSD
+cache. After time 600, the daemon of DMC-DAE triggers a spin down after
+detecting that 1 minute has passed since the last cache read miss. As a result,
+the server power consumption graph shows a decrease of around 4 watts. The
+client power consumption of both configurations is very similar because the
+operations that cause the power consumption are read hits which are served from
+the memory cache, and not from the SSD cache device or the storage source
+device.

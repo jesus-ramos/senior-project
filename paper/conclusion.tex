@@ -1,3 +1,12 @@
 \section{Conclusion}
 \label{sec:conclusion}
 
+This paper proposes an improvement to leverage current block level caching
+mechanisms to save energy in cloud storage systems. In order to better exploit
+caching mechanisms the old policy in DM-Cache was replaced with smarter cache
+eviction policies, namely LRU and LFU. To take advantage of long idle periods on
+the storage nodes a daemon that interacts with the cache and storage node was
+created to spin down the mechanical disks on the storage node in order to save
+energy. These changes led to lower power consumption of storage nodes as some
+requests could now be serviced by much faster and more energy efficient solid
+state disks.
