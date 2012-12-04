@@ -162,6 +162,26 @@
 \section{Evaluation}
 
 \begin{frame}
+  \frametitle{Evaluation Setup}
+
+  \begin{itemize}
+    \item Collected power consumption measurements from a client and server node
+    \item Three configurations:
+    \begin{itemize}
+      \item Baseline
+      \item DM-Cache
+      \item DM-Cache with daemon modifications
+    \end{itemize}
+    \item Two types of benchmarks
+    \begin{itemize}
+      \item Simple file operations
+      \item Workload emulation
+    \end{itemize}
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}
   \frametitle{IOZone: Micro Benchmarks}
 
   \begin{columns}
@@ -181,6 +201,21 @@
   \includegraphics[height=0.4\textheight,width=\textwidth,keepaspectratio]{client-power.png}
 
   \includegraphics[height=0.4\textheight,width=\textwidth,keepaspectratio]{server-power.png}
+
+\end{frame}
+
+\section{Conclusion}
+
+\begin{frame}
+  \frametitle{Conclusion}
+
+  \begin{itemize}
+    \item Leveraged existing client-side caching and added new cache eviction
+    policies
+    \item Implemented disk spin-down daemon to exploit idle disk periods
+    \item Developed a web application to display power consumption graphs
+    \item Presented experiments showing the benefits of client-side SSD caching
+  \end{itemize}
 
 \end{frame}
 
